@@ -1,0 +1,40 @@
+{
+	"cities": [
+		{
+			"name": "Київ",
+			"weather": {
+				"temperature": 3,
+				"description": "Облачно",
+				"humidity": 85,
+				"wind_speed": 5
+			}
+		},
+		{
+			"name": "Харків",
+			"weather": {
+				"temperature": -1,
+				"description": "Снег",
+				"humidity": 90,
+				"wind_speed": 8
+			}
+		},
+		{
+			"name": "Львів",
+			"weather": {
+				"temperature": 2,
+				"description": "Дождь",
+				"humidity": 80,
+				"wind_speed": 6
+			}
+		},
+		{
+			"name": "Одесса",
+			"weather": {
+				"temperature": 6,
+				"description": "Ясно",
+				"humidity": 75,
+				"wind_speed": 7
+			}
+		}
+	]
+}
