@@ -1,0 +1,39 @@
+.app {
+	// background-color: red ;
+	height: auto;
+	display: flex;
+	gap: 60px;
+	align-items: center;
+	justify-content: center;
+	.result {
+		width: min-content;
+	}
+	.operand {
+		padding-top: 30px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+	}
+	.image {
+		width: 300px;
+		height: 200px;
+		position: relative;
+		.text {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: space-around;
+			z-index: 150;
+			position: absolute;
+			left: 0;
+			font-size: 150%;
+			top: 30%;
+		}
+		img {
+			position: relative;
+			width: 100%;
+			height: auto;
+		}
+	}
+}
