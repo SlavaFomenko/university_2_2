@@ -23,9 +23,7 @@ class Human implements HouseCleaning
 class Student extends Human
 {
 }
-class Programmer extends Human
-{
-}
+class Programmer extends Human{}
 
 $student = new Student();
 $programmer = new Programmer();

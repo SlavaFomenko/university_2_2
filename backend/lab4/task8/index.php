@@ -106,9 +106,9 @@ $human->setHeight(180);
 $human->setWeight(75);
 $human->setAge(30);
 
-echo "Human Height: " . $human->getHeight() . " cm\n";
-echo "Human Weight: " . $human->getWeight() . " kg\n";
-echo "Human Age: " . $human->getAge() . " years\n";
+echo "Human Height: " . $human->getHeight() . " cm<br>";
+echo "Human Weight: " . $human->getWeight() . " kg<br>";
+echo "Human Age: " . $human->getAge() . " years<br>";
 
 $student = new Student();
 $student->setHeight(170);
@@ -117,14 +117,14 @@ $student->setAge(20);
 $student->setUniversity("Some University");
 $student->setCourse(2);
 
-echo "Student Height: " . $student->getHeight() . " cm\n";
-echo "Student Weight: " . $student->getWeight() . " kg\n";
-echo "Student Age: " . $student->getAge() . " years\n";
-echo "Student University: " . $student->getUniversity() . "\n";
-echo "Student Course: " . $student->getCourse() . "\n";
+echo "Student Height: " . $student->getHeight() . " cm<br>";
+echo "Student Weight: " . $student->getWeight() . " kg<br>";
+echo "Student Age: " . $student->getAge() . " years<br>";
+echo "Student University: " . $student->getUniversity() . "<br>";
+echo "Student Course: " . $student->getCourse() . "<br>";
 
 $student->moveToNextCourse();
-echo "Student Course after moving to next course: " . $student->getCourse() . "\n";
+echo "Student Course after moving to next course: " . $student->getCourse() . "<br>";
 
 $programmer = new Programmer();
 $programmer->setHeight(175);
@@ -134,10 +134,10 @@ $programmer->setExperience("5 years");
 $programmer->addProgrammingLanguage("PHP");
 $programmer->addProgrammingLanguage("JavaScript");
 
-echo "Programmer Height " . $programmer->getHeight() . " cm\n";
-echo "Programmer Weight " . $programmer->getWeight() . " kg\n";
-echo "Programmer Age " . $programmer->getAge() . " years\n";
-echo "Programmer Experience " . $programmer->getExperience() . "\n";
-echo "Programmer Programming Languages: " . implode(", ", $programmer->getProgrammingLanguages()) . "\n";
+echo "Programmer Height " . $programmer->getHeight() . " cm<br>";
+echo "Programmer Weight " . $programmer->getWeight() . " kg<br>";
+echo "Programmer Age " . $programmer->getAge() . " years<br>";
+echo "Programmer Experience " . $programmer->getExperience() . "<br>";
+echo "Programmer Programming Languages: " . implode(", ", $programmer->getProgrammingLanguages()) . "<br>";
 
 ?>
