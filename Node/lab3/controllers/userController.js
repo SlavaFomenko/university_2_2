@@ -1,9 +1,34 @@
 const User = require('../models/user')
 
+exports.updateUserById = async (req, res) => {
+	try {
+		const userId = req.params.id
+		const updates = req.body
+		console.log(updates)
+
+		const user = await User.findById(userId)
+
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' })
+		}
+
+		Object.keys(updates).forEach(key => {
+			user[key] = updates[key]
+		})
+
+		await user.save()
+
+		res.status(200).json(user)
+	} catch (error) {
+		res.status(500).json({ error: error.message })
+	}
+}
+
 exports.createUser = async (req, res) => {
 	try {
-		const { name, age } = req.body
-		const newUser = new User({ name, age })
+		const { name, age, password } = req.body
+		console.log(password)
+		const newUser = new User({ name, age, password })
 		await newUser.save()
 		res.status(201).json(newUser)
 	} catch (error) {
@@ -33,6 +58,7 @@ exports.getUserById = async (req, res) => {
 		res.status(500).send(error)
 	}
 }
+
 exports.deleteUserById = async (req, res) => {
 	try {
 		const userId = req.params.id
