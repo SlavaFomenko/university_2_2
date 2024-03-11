@@ -21,8 +21,6 @@ function App() {
 			setResult(a.filter(value => b.includes(value)))
 		}
 		if (operation === '-') {
-			// a = ['1', '2', '3', '4', '5']
-			// b = ['4', '5', '6', '7', '8', '9', '0']
 			setResult(a.filter(item => !b.includes(item)))
 		}
 		if (operation === '△') {
