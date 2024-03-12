@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<h1>User Registration</h1>
+		<form id="registrationForm">
+			<label for="name">Name:</label><br />
+			<input type="text" id="name" name="name" required /><br />
+			<label for="email">Email:</label><br />
+			<input type="email" id="email" name="email" required /><br />
+			<label for="password">Password:</label><br />
+			<input
+				type="password"
+				id="password"
+				name="password"
+				required
+			/><br /><br />
+			<input type="submit" value="Register" />
+		</form>
+
+		<h1>User List</h1>
+		<button id="getUserList">Get User List</button>
+		<ul id="userList"></ul>
+
+		<script>
+			document
+				.getElementById('registrationForm')
+				.addEventListener('submit', function (event) {
+					event.preventDefault()
+					const formData = new FormData(this)
+					fetch('http://localhost:8888/register.php', {
+						method: 'POST',
+						body: formData,
+					})
+						.then(response => {
+							console.log('Response status:', response.status)
+							if (!response.ok) {
+								throw new Error('Network response was not ok')
+							}
+							return response.json()
+						})
+						.then(data => {
+							if (data && data.success) {
+								alert('User registered successfully')
+							} else if (data && data.message) {
+								alert(data.message)
+							} else {
+								throw new Error('Unexpected response format')
+							}
+						})
+						.catch(error => console.error('Error:', error))
+				})
+
+			document
+				.getElementById('getUserList')
+				.addEventListener('click', function () {
+					fetch('http://localhost:8888/get_users.php')
+						.then(response => response.json())
+						.then(data => {
+							// console.log(data)
+
+							const userList = document.getElementById('userList')
+							userList.innerHTML = ''
+							data.forEach(user => {
+								const li = document.createElement('li')
+								li.textContent = user.name + ' - ' + user.email
+								userList.appendChild(li)
+							})
+						})
+						.catch(error => console.error('Error:', error))
+				})
+		</script>
+	</body>
+</html>
