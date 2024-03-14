@@ -20,25 +20,6 @@ const fetchAndDisplayNotes = async () => {
 
 document.addEventListener('DOMContentLoaded', () => {
 	const addNoteForm = document.getElementById('addNoteForm')
-	// const notesContainer = document.getElementById('notes')
-	// const fetchAndDisplayNotes = async () => {
-	// 	notesContainer.innerHTML = ''
-
-	// 	const response = await fetch('fetch.php')
-	// 	const notes = await response.json()
-
-	// 	notes.forEach(note => {
-	// 		const noteElement = document.createElement('div')
-	// 		noteElement.setAttribute('class', 'note')
-	// 		noteElement.innerHTML = `
-	// 						<h3>${note.title}</h3>
-	// 						<p>${note.text}</p>
-	// 						<button onclick="updateNote(${note.id})">Update</button>
-	// 						<button onclick="deleteNote(${note.id})">Delete</button>
-	// 				`
-	// 		notesContainer.appendChild(noteElement)
-	// 	})
-	// }
 
 	const addNote = async (title, text) => {
 		try {
