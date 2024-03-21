@@ -18,6 +18,8 @@ exports.updateUserById = async (req, res) => {
 
 		await user.save()
 
+		console.log('dsfasfsa')
+
 		res.status(200).json(user)
 	} catch (error) {
 		res.status(500).json({ error: error.message })
@@ -31,6 +33,17 @@ exports.createUser = async (req, res) => {
 		const newUser = new User({ name, age, password })
 		await newUser.save()
 		res.status(201).json(newUser)
+	} catch (error) {
+		res.status(500).json({ error: error.message })
+	}
+}
+
+exports.loginUser = async (req, res) => {
+	const { name, password } = req.body
+	try {
+		const user = await User.findOneByCredentials(name, password)
+		const token = await user.generateAuthToken()
+		res.status(200).json({ user, token })
 	} catch (error) {
 		res.status(500).json({ error: error.message })
 	}
