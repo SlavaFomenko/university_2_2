@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Мінімальне остове дерево</title>
+		<script
+			type="text/javascript"
+			src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+		></script>
+		<style type="text/css">
+			#mynetwork {
+				width: 600px;
+				height: 400px;
+				border: 1px solid lightgray;
+			}
+			#algorithmSelect {
+				margin-bottom: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Мінімальне остове дерево</h2>
+		<select id="algorithmSelect">
+			<option value="prim">Пріма</option>
+			<option value="kruskal">Краскала</option>
+		</select>
+		<button onclick="runAlgorithm()">Запустити алгоритм</button>
+		<div id="mynetwork"></div>
+
+		<script type="text/javascript">
+			var nodes = new vis.DataSet([
+				{ id: 1, label: '1', x: -200, y: 100 },
+				{ id: 2, label: '2', x: -100, y: 0 },
+				{ id: 3, label: '3', x: -100, y: 100 },
+				{ id: 4, label: '4', x: -100, y: 200 },
+				{ id: 5, label: '5', x: 0, y: 0 },
+				{ id: 6, label: '6', x: 0, y: 100 },
+				{ id: 7, label: '7', x: 0, y: 200 },
+				{ id: 8, label: '8', x: 100, y: 0 },
+				{ id: 9, label: '9', x: 100, y: 100 },
+				{ id: 10, label: '10', x: 100, y: 200 },
+				{ id: 11, label: '11', x: 200, y: 100 },
+			])
+
+			var edges = new vis.DataSet([
+				{ id: '1-2', from: 1, to: 2, label: '5' },
+				{ id: '1-4', from: 1, to: 4, label: '2' },
+				{ id: '1-3', from: 1, to: 3, label: '3' },
+				{ id: '2-5', from: 2, to: 5, label: '2' },
+				{ id: '3-6', from: 3, to: 6, label: '1          ' },
+				{ id: '4-7', from: 4, to: 7, label: '3' },
+				{ id: '2-7', from: 2, to: 7, label: '6' },
+				{ id: '3-5', from: 3, to: 5, label: '1' },
+				{ id: '4-6', from: 4, to: 6, label: '2' },
+				{ id: '5-8', from: 5, to: 8, label: '5' },
+				{ id: '7-10', from: 7, to: 10, label: '7' },
+				{ id: '5-9', from: 5, to: 9, label: '7' },
+				{ id: '6-8', from: 6, to: 8, label: '7' },
+				{ id: '6-10', from: 6, to: 10, label: '3' },
+				{ id: '7-9', from: 7, to: 9, label: '4' },
+				{ id: '8-11', from: 8, to: 11, label: '4' },
+				{ id: '9-11', from: 9, to: 11, label: '4' },
+				{ id: '10-11', from: 10, to: 11, label: '4' },
+			])
+
+			var container = document.getElementById('mynetwork')
+
+			var data = {
+				nodes: nodes,
+				edges: edges,
+			}
+
+			var options = {
+				edges: {
+					labelHighlightBold: true,
+					smooth: false,
+				},
+				interaction: {},
+				physics: { enabled: false },
+			}
+
+			var network = new vis.Network(container, data, options)
+
+			function sleep(ms) {
+				return new Promise(resolve => setTimeout(resolve, ms))
+			}
+
+			async function runAlgorithm() {
+				var algorithmSelect = document.getElementById('algorithmSelect')
+				var selectedAlgorithm = algorithmSelect.value
+
+				var selectedEdges = []
+				var selectedEdgesIds = []
+				var selectedNodesIds = []
+				var edgesArray = edges.get()
+
+				if (selectedAlgorithm === 'prim') {
+					// Пріма алгоритм
+					var visited = {}
+					var startNodeId = nodes.get()[0].id
+
+					selectedNodesIds.push(startNodeId)
+					visited[startNodeId] = true
+
+					while (selectedNodesIds.length < nodes.length) {
+						var minWeight = Number.MAX_VALUE
+						var minEdge = null
+
+						for (var i = 0; i < edgesArray.length; i++) {
+							var edge = edgesArray[i]
+							if (
+								(selectedNodesIds.includes(edge.from) ||
+									selectedNodesIds.includes(edge.to)) &&
+								!(
+									selectedNodesIds.includes(edge.from) &&
+									selectedNodesIds.includes(edge.to)
+								) &&
+								edge.label < minWeight
+							) {
+								minWeight = edge.label
+								minEdge = edge
+							}
+						}
+
+						selectedEdges.push(minEdge)
+						selectedEdgesIds.push(minEdge.id)
+
+						if (!selectedNodesIds.includes(minEdge.from))
+							selectedNodesIds.push(minEdge.from)
+						if (!selectedNodesIds.includes(minEdge.to))
+							selectedNodesIds.push(minEdge.to)
+
+						visited[minEdge.from] = true
+						visited[minEdge.to] = true
+
+						await sleep(1000)
+						network.selectEdges(selectedEdgesIds)
+					}
+				} else if (selectedAlgorithm === 'kruskal') {
+					edgesArray.sort(function (a, b) {
+						return a.label - b.label
+					})
+
+					var parent = {}
+
+					function find(node) {
+						if (parent[node] === undefined) return node
+						return find(parent[node])
+					}
+
+					function union(from, to) {
+						var x = find(from)
+						var y = find(to)
+						parent[x] = y
+					}
+
+					for (var i = 0; i < edgesArray.length; i++) {
+						var edge = edgesArray[i]
+						if (find(edge.from) !== find(edge.to)) {
+							selectedEdges.push(edge)
+							selectedEdgesIds.push(edge.id)
+							union(edge.from, edge.to)
+						}
+
+						await sleep(1000) // Затримка для візуалізації
+						network.selectEdges(selectedEdgesIds)
+					}
+				}
+			}
+		</script>
+	</body>
+</html>
