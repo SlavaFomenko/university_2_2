@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<style>
+			#graph-container {
+				position: relative;
+				margin: 20px;
+				display: flex;
+				padding: 20px;
+				border-radius: 10px;
+			}
+
+			.node circle {
+				fill: black;
+				stroke-width: 1px;
+				transition: fill 0.1s, stroke 0.1s;
+			}
+
+			.edge path {
+				stroke: #696969;
+				stroke-width: 2px;
+				transition: stroke 0.3s, stroke-width 0.3s;
+			}
+
+			.edge path:hover {
+				stroke: #2f4f4f;
+				stroke-width: 3px;
+			}
+
+			.edge text {
+				font-size: 14px;
+				fill: black;
+				font-weight: bold;
+			}
+
+			.node text {
+				font-size: 12px;
+				fill: #000080;
+				text-anchor: middle;
+				dominant-baseline: central;
+				font-weight: bold;
+			}
+
+			button {
+				top: 0;
+				left: 30px;
+				border: 2px solid black;
+				position: absolute;
+				display: block;
+				margin: 20px auto;
+				padding: 12px 24px;
+				font-size: 18px;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+				transition: background-color 0.3s, transform 0.3s;
+			}
+
+			button:hover {
+				transform: scale(1.05);
+				/* border: 2px solid black; */
+			}
+
+			.shortest-path {
+				stroke: rgba(255, 0, 72, 0.195);
+				stroke-width: 10px;
+				border-radius: 20px;
+
+				fill: none;
+				transition: stroke 0.3s, stroke-width 0.3s;
+			}
+
+			.shortest-path:hover {
+				stroke: #228b22;
+				stroke-width: 4px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="graph-container"></div>
+		<button onclick="runDijkstra()">=</button>
+		<script src="https://d3js.org/d3.v7.min.js"></script>
+		<script>
+			const width = 600
+			const height = 500
+			const graphData = {
+				nodes: [],
+				links: [],
+			}
+
+			for (let y = 0; y < 5; y++) {
+				for (let x = 0; x < 6; x++) {
+					graphData.nodes.push({
+						id: y * 6 + x,
+						x: x * 100 + 50,
+						y: y * 100 + 50,
+					})
+				}
+			}
+
+			const weights = [
+				[4, 4, 6, 7, 8, 0],
+				[2, 1, 1, 1, 5, 0],
+				[1, 1, 3, 7, 1, 0],
+				[3, 7, 5, 3, 5, 0],
+				[3, 3, 4, 7, 7, 0],
+				[4, 5, 3, 2, 7, 1],
+				[3, 3, 4, 6, 7, 2],
+				[8, 2, 3, 1, 8, 8],
+				[4, 1, 2, 7, 3, 1],
+			]
+
+			for (let y = 0; y < 5; y++) {
+				for (let x = 0; x < 6; x++) {
+					const id = y * 6 + x
+					if (x < 5) {
+						graphData.links.push({
+							source: id,
+							target: id + 1,
+							weight: weights[y][x],
+						})
+					}
+					if (y < 4) {
+						graphData.links.push({
+							source: id,
+							target: id + 6,
+							weight: weights[y + 5][x],
+						})
+					}
+				}
+			}
+
+			const svg = d3
+				.select('#graph-container')
+				.append('svg')
+				.attr('width', width)
+				.attr('height', height)
+
+			const link = svg
+				.selectAll('.edge')
+				.data(graphData.links)
+				.enter()
+				.append('g')
+				.attr('class', 'edge')
+
+			link.append('path').attr('d', d => {
+				const source = graphData.nodes[d.source]
+				const target = graphData.nodes[d.target]
+				return `M${source.x},${source.y} L${target.x},${target.y}`
+			})
+
+			link
+				.append('text')
+				.attr(
+					'x',
+					d => (graphData.nodes[d.source].x + graphData.nodes[d.target].x) / 2
+				)
+				.attr(
+					'y',
+					d => (graphData.nodes[d.source].y + graphData.nodes[d.target].y) / 2
+				)
+				.attr('dy', '0.35em')
+				.text(d => d.weight)
+
+			const node = svg
+				.selectAll('.node')
+				.data(graphData.nodes)
+				.enter()
+				.append('g')
+				.attr('class', 'node')
+				.attr('transform', d => `translate(${d.x},${d.y})`)
+
+			node.append('circle').attr('r', 10)
+
+			function runDijkstra() {
+				const startNode = 0
+				const endNode = 29
+				const nodes = graphData.nodes.length
+				const distances = Array(nodes).fill(Infinity)
+				const visited = Array(nodes).fill(false)
+				const prev = Array(nodes).fill(null)
+				distances[startNode] = 0
+
+				for (let i = 0; i < nodes; i++) {
+					let minDist = Infinity
+					let minNode = null
+
+					for (let j = 0; j < nodes; j++) {
+						if (!visited[j] && distances[j] < minDist) {
+							minDist = distances[j]
+							minNode = j
+						}
+					}
+
+					if (minNode === null) break
+					visited[minNode] = true
+
+					const neighbors = graphData.links.filter(
+						link => link.source === minNode || link.target === minNode
+					)
+					for (let neighbor of neighbors) {
+						const target =
+							neighbor.source === minNode ? neighbor.target : neighbor.source
+						const newDist = distances[minNode] + neighbor.weight
+						if (newDist < distances[target]) {
+							distances[target] = newDist
+							prev[target] = minNode
+						}
+					}
+				}
+
+				let path = []
+				for (let at = endNode; at !== null; at = prev[at]) {
+					path.push(at)
+				}
+				path.reverse()
+
+				const shortestPath = []
+				for (let i = 0; i < path.length - 1; i++) {
+					const source = graphData.nodes[path[i]]
+					const target = graphData.nodes[path[i + 1]]
+					shortestPath.push({ source, target })
+				}
+
+				shortestPath.forEach((d, i) => {
+					setTimeout(() => {
+						svg
+							.append('path')
+							.attr('class', 'shortest-path')
+							.attr(
+								'd',
+								`M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`
+							)
+					}, i * 1500)
+				})
+			}
+		</script>
+	</body>
+</html>
